@@ -1,0 +1,13 @@
+[Unit]
+Description=PS4 Joystick service
+#can't get it to stop reliably
+#StopWhenUnneeded=true
+
+[Service]
+ExecStartPre=/bin/hciconfig hciX up
+ExecStart=/usr/local/bin/ds4drv --config /home/robot/Rover/RoverCommand/ds4drv.config
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
