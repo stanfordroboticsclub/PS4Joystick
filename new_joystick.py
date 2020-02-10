@@ -23,7 +23,7 @@ class ActionShim(ReportAction):
    def __init__(self, *args, **kwargs):
        super(ActionShim, self).__init__(*args, **kwargs)
        self.timer = self.create_timer(0.02, self.intercept)
-       self.values = None
+       self.values = {}
 
    def enable(self):
        self.timer.start()
@@ -76,23 +76,22 @@ def main():
 
 
     print("thread created")
-    time.sleep(1)
+    # time.sleep(1)
     thread.controller.setup_device(next(backend.devices))
     print("devices conencted")
-    time.sleep(1)
+    # time.sleep(1)
 
-    # shim = ActionShim(thread.controller)
-    # thread.controller.actions.append(shim)
-    thread.controller.setup_device(thread.controller.device)
-    print("device setup")
-    time.sleep(1)
+    shim = ActionShim(thread.controller)
+    thread.controller.actions.append(shim)
+    shim.enable()
+    # time.sleep(1)
 
     while 1:
         if thread.controller.error:
             print("encountered error")
             exit(1)
 
-        for key, values in shim.values.items():
+        for key, value in shim.values.items():
             print(key,value)
         print()
 
