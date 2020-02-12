@@ -25,4 +25,4 @@ To implement this functionality to a new repository (say [PupperCommand](https:/
 
 ### Mac
 
-Sadly ds4drv doesn't work on macs. But you can get some of the functionality by installing pygame with `sudo pip3 install pygame`. Take a look in `mac_joystick.py` for an example
+Sadly ds4drv doesn't work on macs. But you can get some of the functionality by installing pygame with `sudo pip3 install pygame`. Take a look in `mac_joystick.py` for an example. Note this only works over USB (plug the controller in using a micro usb cable) and the mapping is different then using pygame with ds4drv
