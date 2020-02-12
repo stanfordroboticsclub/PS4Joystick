@@ -104,7 +104,7 @@ class Joystick:
             time.sleep(0.1)
 
     def get_input(self):
-        if thread.controller.error:
+        if self.thread.controller.error:
             raise IOError("Encountered error with controller")
 
         return self.shim.values
