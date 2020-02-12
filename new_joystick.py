@@ -97,6 +97,10 @@ class Joystick:
         self.thread.controller.actions.append(self.shim)
         self.shim.enable()
 
+        self._color = (None, None, None)
+        self._rumble = (None, None)
+        self._flash = (None, None)
+
         # ensure we get a value before returning
         while self.shim.values is None:
             pass
@@ -136,18 +140,31 @@ class Joystick:
 
     def led_color(self, red=0, green=0, blue=0):
         """ set RGB color in range 0-255"""
-        self.thread.controller.device.set_led(int(red),int(green),int(blue))
+        color = (int(red),int(green),int(blue))
+        if( self._color == color ):
+            return
+        self._color = color
+        self.thread.controller.device.set_led( *self._color )
 
     def rumble(self, small=0, big=0):
         """ rumble in range 0-255 """
-        self.thread.controller.device.rumble(int(small),int(big))
+        rumble = (int(small),int(big)))
+        if( self._rumble == rumble ):
+            return
+        self._rumble = rumble
+        self.thread.controller.device.rumble( *self._rumble )
 
     def led_flash(self, on=0, off=0):
         """ flash led: on and off times in range 0 - 255 """
-        if(on == 0 and off ==0):
+        flash = (int(on),int(off)))
+        if( self._flash == flash ):
+            return
+        self._flash = flash
+
+        if( self._flash == (0,0) ):
             self.thread.controller.device.stop_led_flash()
         else:
-            self.thread.controller.device.start_led_flash(int(on),int(off))
+            self.thread.controller.device.start_led_flash( *self._flash )
 
 
 if __name__ == "__main__":

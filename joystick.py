@@ -26,6 +26,12 @@ while True:
             mode = MODES.SAFE
             j.led_color(green=255)
 
+        # overwrite when swiching modes to prevent phantom motions
+        values['dpad_down'] = 0
+        values['dpad_up'] = 0
+        values['dpad_right'] = 0
+        values['dpad_left'] = 0
+
     if mode == MODES.DRIVE:
         forward_left  = - values['left_analog_y']
         forward_right = - values['right_analog_y']
