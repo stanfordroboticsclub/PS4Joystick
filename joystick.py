@@ -1,6 +1,7 @@
 from UDPComms import Publisher
 from new_joystick import Joystick
 
+import time
 from enum import Enum
 
 drive_pub = Publisher(8830)
@@ -106,4 +107,4 @@ while True:
     else:
         pass
 
-    pygame.time.wait(100)
+    time.sleep(0.1)
