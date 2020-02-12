@@ -24,13 +24,14 @@ class ActionShim(ReportAction):
     def __init__(self, *args, **kwargs):
         super(ActionShim, self).__init__(*args, **kwargs)
         self.timer = self.create_timer(0.02, self.intercept)
-        self.values = {}
+        self.values = None
 
     def enable(self):
         self.timer.start()
 
     def disable(self):
         self.timer.stop()
+        self.values = None
 
     def load_options(self, options):
         if options.dump_reports:
@@ -95,6 +96,10 @@ class Joystick:
         self.shim = ActionShim(self.thread.controller)
         self.thread.controller.actions.append(self.shim)
         self.shim.enable()
+
+        # ensure we get a value before returning
+        while self.shim.values is None:
+            pass
 
     def close(self):
         if self.thread is None:
