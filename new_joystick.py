@@ -148,7 +148,7 @@ class Joystick:
 
     def rumble(self, small=0, big=0):
         """ rumble in range 0-255 """
-        rumble = (int(small),int(big)))
+        rumble = (int(small),int(big))
         if( self._rumble == rumble ):
             return
         self._rumble = rumble
@@ -156,7 +156,7 @@ class Joystick:
 
     def led_flash(self, on=0, off=0):
         """ flash led: on and off times in range 0 - 255 """
-        flash = (int(on),int(off)))
+        flash = (int(on),int(off))
         if( self._flash == flash ):
             return
         self._flash = flash
