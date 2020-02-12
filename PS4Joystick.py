@@ -71,10 +71,7 @@ class Joystick:
     def __init__(self):
         self.thread = None
 
-        try:
-            options = load_options()
-        except ValueError as err:
-            Daemon.exit("Failed to parse options: {0}", err)
+        options = load_options()
 
         if options.hidraw:
             raise ValueError("HID mode not supported")
@@ -83,11 +80,7 @@ class Joystick:
             subprocess.run(["hciconfig", "hciX", "up"])
             backend = BluetoothBackend(Daemon.logger)
 
-        try:
-            backend.setup()
-        except BackendError as err:
-            print("backend error")
-            Daemon.exit(err)
+        backend.setup()
 
         self.thread = create_controller_thread(1, options.controllers[0])
 
