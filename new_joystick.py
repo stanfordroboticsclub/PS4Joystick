@@ -17,6 +17,9 @@ from ds4drv.__main__ import create_controller_thread
 # from ds4drv.__main__ import SigintHandler
 
 
+
+
+
 class ActionShim(ReportAction):
    """ intercepts the joystick report"""
 
@@ -47,58 +50,76 @@ class ActionShim(ReportAction):
        self.values = new_out
        return True
 
+class Joystick:
+    def __init__(self):
+        self.thread = None
+        signal.signal(signal.SIGINT, self.cleanup_thread)
 
-def main():
-    threads = []
+        try:
+            options = load_options()
+        except ValueError as err:
+            Daemon.exit("Failed to parse options: {0}", err)
 
-    # sigint_handler = SigintHandler(threads)
-    # signal.signal(signal.SIGINT, sigint_handler)
+        if options.hidraw:
+            raise ValueError("HID mode not supported")
+            backend = HidrawBackend(Daemon.logger)
+        else:
+            backend = BluetoothBackend(Daemon.logger)
 
-    try:
-        options = load_options()
-    except ValueError as err:
-        Daemon.exit("Failed to parse options: {0}", err)
+        try:
+            backend.setup()
+        except BackendError as err:
+            print("backend error")
+            Daemon.exit(err)
 
-    if options.hidraw:
-        raise ValueError("HID mode not supported")
-        backend = HidrawBackend(Daemon.logger)
-    else:
-        backend = BluetoothBackend(Daemon.logger)
+        self.thread = create_controller_thread(1, options.controllers[0])
 
-    try:
-        backend.setup()
-    except BackendError as err:
-        print("backend error")
-        Daemon.exit(err)
+        self.thread.controller.setup_device(next(backend.devices))
 
-    thread = create_controller_thread(1, options.controllers[0])
-    threads.append(thread)
+        self.shim = ActionShim(self.thread.controller)
+        self.thread.controller.actions.append(shim)
+        self.shim.enable()
 
+    def cleanup_thread(self):
+        if self.thread is None:
+            return
+        self.thread.controller.exit("Cleaning up...", error=False)
+        self.thread.controller.loop.stop()
+        self.thread.join()
 
-    print("thread created")
-    # time.sleep(1)
-    thread.controller.setup_device(next(backend.devices))
-    print("devices conencted")
-    # time.sleep(1)
+    def __del__(self):
+        self.cleanup_thread()
 
-    shim = ActionShim(thread.controller)
-    thread.controller.actions.append(shim)
-    shim.enable()
-    # time.sleep(1)
+    def print_values(self):
+        while 1:
+            for key, value in self.get_input().items():
+                print(key,value)
+            print()
 
-    while 1:
+            time.sleep(0.1)
+
+    def get_input(self):
         if thread.controller.error:
-            print("encountered error")
-            exit(1)
+            raise IOError("Encountered error with controller")
+        return self.shim.values
 
-        for key, value in shim.values.items():
-            print(key,value)
-        print()
+    def led_color(self, red=0, green=0, blue=0):
+        """ set RGB color in range 0-255"""
+        self.thread.controller.device.set_led(red,green,blue)
 
-        time.sleep(0.1)
+    def rumble(self, small=0, big=0):
+        """ rumble in range 0-255 """
+        self.thread.controller.device.rumble(small,big)
 
+    def led_flash(self, on=0, off=0):
+        """ flash led: on and off times in range 0 - 255 """
+        if(on == 0 and off ==0):
+            self.thread.controller.device.stop_led_flash()
+        else:
+            self.thread.controller.device.start_led_flash(on,off)
 
 
 
 if __name__ == "__main__":
-    main()
+    j = Joystick()
+    j.print_values()
