@@ -85,16 +85,14 @@ class Joystick:
         self.thread.controller.actions.append(self.shim)
         self.shim.enable()
 
-    def cleanup_thread(self, *args):
+    def cleanup_thread(self, signum=None, frame=None):
         if self.thread is None:
             return
-        print(1)
+        if signum is not None:
+            signal.signal(signum, signal.SIG_DFL)
         self.thread.controller.exit("Cleaning up...")
-        print(2)
         self.thread.controller.loop.stop()
-        print(3)
         self.thread.join()
-        print(4)
 
     def __del__(self):
         self.cleanup_thread()
