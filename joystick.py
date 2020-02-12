@@ -31,11 +31,11 @@ while True:
     if mode == MODE.DRIVE:
         forward_left  = - values['left_analog_y']
         forward_right = - values['right_analog_y']
-        twist = values['right_analog_x')
+        twist = values['right_analog_x']
 
         on_right = values['button_r1']
         on_left = values['button_l1']
-        l_trigger = (pygame.joystick.Joystick(0).get_axis(3))
+        l_trigger = values['l2_analog']
 
         if on_left or on_right:
             if on_right:
@@ -45,7 +45,7 @@ while True:
 
             slow = 150
             fast = 500
-                       # this was -1 to 1. currently - to 1
+
             max_speed = (fast+slow)/2 + l_trigger*(fast-slow)/2
             print(max_speed)
 
@@ -53,27 +53,29 @@ while True:
         else:
             drive_pub.send({'f':0,'t':0})
 
-    if mode == MODE.ARM:
-        r_forward  = -(pygame.joystick.Joystick(0).get_axis(5))
-        r_side = (pygame.joystick.Joystick(0).get_axis(2))
+    elif mode == MODE.ARM:
+        r_forward  = - values['right_analog_y']
+        r_side = values['right_analog_x']
 
-        l_forward  = -(pygame.joystick.Joystick(0).get_axis(1))
-        l_side = (pygame.joystick.Joystick(0).get_axis(0))
+        l_forward  = - values['left_analog_y']
+        l_side = values['left_analog_x']
 
-        r_shoulder  = (pygame.joystick.Joystick(0).get_button(5))
-        l_shoulder  = (pygame.joystick.Joystick(0).get_button(4))
+        r_shoulder  = values['button_r1']
+        l_shoulder  = values['button_l1']
 
-        r_trigger  = (pygame.joystick.Joystick(0).get_axis(4))
-        l_trigger = (pygame.joystick.Joystick(0).get_axis(3))
+        r_trigger  = values['r2_analog']
+        l_trigger = values['l2_analog']
 
-        square  = (pygame.joystick.Joystick(0).get_button(0))
-        cross  = (pygame.joystick.Joystick(0).get_button(1))
-        circle  = (pygame.joystick.Joystick(0).get_button(2))
-        triangle  = (pygame.joystick.Joystick(0).get_button(3))
+        square  = values['button_square']
+        cross  = values['button_cross']
+        circle  = values['button_circle']
+        triangle  = values['button_triangle']
 
-        PS  = (pygame.joystick.Joystick(0).get_button(12)) 
+        PS  = values['button_ps'] 
 
-        hat = pygame.joystick.Joystick(0).get_hat(0)
+        # hat directions could be reversed from previous version
+        hat = [ values["dpad_up"] - values["dpad_down"],
+               values["dpad_right"] - values["dpad_left"] ]
 
         reset = (PS == 1) and (triangle == 1)
         reset_dock = (PS==1) and (square ==1)
@@ -93,6 +95,15 @@ while True:
 
         print(target_vel)
         arm_pub.send(target_vel)
+    elif mode == MODE.SAFE:
+        # random stuff to demo color features
+        triangle = values['button_triangle']
+        square = values['button_square']
+
+        r2 = values['r2_analog']
+        r2 = j.map( r2, -1, 1, 0 ,255)
+        j.led_color( green = 255, blue = r2)
+
     else:
         pass
 

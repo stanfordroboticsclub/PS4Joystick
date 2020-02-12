@@ -39,7 +39,6 @@ class ActionShim(ReportAction):
             self.disable()
 
     def deadzones(self,values):
-
         deadzone = 0.14
         if math.sqrt( values['left_analog_x'] ** 2  + values['left_analog_y'] ** 2) < deadzone:
             values['left_analog_y'] = 0.0
@@ -51,7 +50,6 @@ class ActionShim(ReportAction):
         return values
 
     def intercept(self, report):
-        dump = "Report magic dump\n"
         new_out = OrderedDict()
         for key in report.__slots__:
             value = getattr(report, key)
@@ -107,7 +105,25 @@ class Joystick:
     def __del__(self):
         self.close()
 
+    @staticmethod
+    def map(val, in_min, in_max, out_min, out_max):
+        """ helper static method that helps with rescaling """
+        in_span = in_max - in_min
+        out_span = out_max - out_min
+
+        value_scaled = float(val - in_min) / float(in_span)
+        value_mapped = (value_scaled * out_span) + out_min
+
+        if value_mapped < out_min:
+            value_mapped = out_min
+
+        if value_mapped > out_max:
+            value_mapped = out_max
+
+        return value_mapped
+
     def get_input(self):
+        """ returns ordered dict with state of all inputs """
         if self.thread.controller.error:
             raise IOError("Encountered error with controller")
 
