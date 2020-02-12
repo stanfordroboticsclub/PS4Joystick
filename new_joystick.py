@@ -63,11 +63,10 @@ class ActionShim(ReportAction):
 
         new_out = self.deadzones(new_out)
 
-        for key in ["left_analog_x", "left_analog_y", "right_analog_x", "right_analog_y"]:
+        for key in ["left_analog_x", "left_analog_y", 
+                    "right_analog_x", "right_analog_y", 
+                    "l2_analog", "r2_analog"]:
             new_out[key] =  (new_out[key] - 127) /128
-
-        for key in ["l2_analog", "r2_analog"]:
-            new_out[key] =  new_out[key] /256
 
         self.values = new_out
         return True
