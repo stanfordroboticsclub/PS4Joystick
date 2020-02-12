@@ -66,7 +66,7 @@ class ActionShim(ReportAction):
         for key in ["left_analog_x", "left_analog_y", 
                     "right_analog_x", "right_analog_y", 
                     "l2_analog", "r2_analog"]:
-            new_out[key] =  (new_out[key] - 127) /128
+            new_out[key] =  2*( new_out[key]/255 )  - 1
 
         self.values = new_out
         return True
