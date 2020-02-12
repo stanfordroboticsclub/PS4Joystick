@@ -25,8 +25,6 @@ while True:
         elif values['dpad_down']:
             mode = MODES.SAFE
             j.led_color(green=255)
-        continue
-
 
     if mode == MODES.DRIVE:
         forward_left  = - values['left_analog_y']
@@ -47,9 +45,10 @@ while True:
             fast = 500
 
             max_speed = (fast+slow)/2 + l_trigger*(fast-slow)/2
-            print(max_speed)
 
-            drive_pub.send({'f':(max_speed*forward),'t':-150*twist})
+            out = {'f':(max_speed*forward),'t':-150*twist}
+            drive_pub.send(out)
+            print(out)
         else:
             drive_pub.send({'f':0,'t':0})
 
@@ -99,6 +98,8 @@ while True:
         # random stuff to demo color features
         triangle = values['button_triangle']
         square = values['button_square']
+
+        j.rumble(small = 255*triangle, big = 255*square)
 
         r2 = values['r2_analog']
         r2 = j.map( r2, -1, 1, 0 ,255)
