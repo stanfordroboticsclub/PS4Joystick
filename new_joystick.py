@@ -19,42 +19,41 @@ from ds4drv.__main__ import create_controller_thread
 
 
 
-
 class ActionShim(ReportAction):
-   """ intercepts the joystick report"""
+    """ intercepts the joystick report"""
 
-   def __init__(self, *args, **kwargs):
-       super(ActionShim, self).__init__(*args, **kwargs)
-       self.timer = self.create_timer(0.02, self.intercept)
-       self.values = {}
+    def __init__(self, *args, **kwargs):
+        super(ActionShim, self).__init__(*args, **kwargs)
+        self.timer = self.create_timer(0.02, self.intercept)
+        self.values = {}
 
-   def enable(self):
-       self.timer.start()
+    def enable(self):
+        self.timer.start()
 
-   def disable(self):
-       self.timer.stop()
+    def disable(self):
+        self.timer.stop()
 
-   def load_options(self, options):
-       if options.dump_reports:
-           self.enable()
-       else:
-           self.disable()
+    def load_options(self, options):
+        if options.dump_reports:
+            self.enable()
+        else:
+            self.disable()
 
-   def intercept(self, report):
-       dump = "Report magic dump\n"
-       new_out = {}
-       for key in report.__slots__:
-           value = getattr(report, key)
-           new_out[key] = value
+    def intercept(self, report):
+        dump = "Report magic dump\n"
+        new_out = {}
+        for key in report.__slots__:
+            value = getattr(report, key)
+            new_out[key] = value
 
-        for key in ["left_analog_x", "left_analog_y", "right_analog_x", "right_analog_y"]:
-           new_out[key] =  (new_out[key] - 128) /128
+    for key in ["left_analog_x", "left_analog_y", "right_analog_x", "right_analog_y"]:
+        new_out[key] =  (new_out[key] - 128) /128
 
-        for key in ["l2_analog", "r2_analog"]:
-           new_out[key] =  new_out[key] /256
+    for key in ["l2_analog", "r2_analog"]:
+        new_out[key] =  new_out[key] /256
 
-       self.values = new_out
-       return True
+    self.values = new_out
+    return True
 
 class Joystick:
     def __init__(self):
