@@ -12,7 +12,6 @@ MODES = Enum('MODES', 'SAFE DRIVE ARM')
 mode = MODES.SAFE
 
 while True:
-
     values = j.get_input()
 
     if( values['button_ps'] ):
@@ -28,7 +27,7 @@ while True:
         continue
 
 
-    if mode == MODE.DRIVE:
+    if mode == MODES.DRIVE:
         forward_left  = - values['left_analog_y']
         forward_right = - values['right_analog_y']
         twist = values['right_analog_x']
@@ -53,7 +52,7 @@ while True:
         else:
             drive_pub.send({'f':0,'t':0})
 
-    elif mode == MODE.ARM:
+    elif mode == MODES.ARM:
         r_forward  = - values['right_analog_y']
         r_side = values['right_analog_x']
 
@@ -95,7 +94,7 @@ while True:
 
         print(target_vel)
         arm_pub.send(target_vel)
-    elif mode == MODE.SAFE:
+    elif mode == MODES.SAFE:
         # random stuff to demo color features
         triangle = values['button_triangle']
         square = values['button_square']
