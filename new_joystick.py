@@ -82,7 +82,7 @@ class Joystick:
         self.thread.controller.setup_device(next(backend.devices))
 
         self.shim = ActionShim(self.thread.controller)
-        self.thread.controller.actions.append(shim)
+        self.thread.controller.actions.append(self.shim)
         self.shim.enable()
 
     def cleanup_thread(self):
