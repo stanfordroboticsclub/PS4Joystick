@@ -4,6 +4,7 @@ import signal
 import time
 
 from threading import Thread
+from collections import OrderedDict
 
 from ds4drv.actions import ActionRegistry
 from ds4drv.backends import BluetoothBackend, HidrawBackend
@@ -14,9 +15,6 @@ from ds4drv.exceptions import BackendError
 from ds4drv.action import ReportAction
 
 from ds4drv.__main__ import create_controller_thread
-# from ds4drv.__main__ import SigintHandler
-
-
 
 
 class ActionShim(ReportAction):
@@ -41,7 +39,7 @@ class ActionShim(ReportAction):
 
     def intercept(self, report):
         dump = "Report magic dump\n"
-        new_out = {}
+        new_out = OrderedDict()
         for key in report.__slots__:
             value = getattr(report, key)
             new_out[key] = value
