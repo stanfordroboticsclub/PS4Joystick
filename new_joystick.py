@@ -1,6 +1,5 @@
 
 import sys
-# import signal
 import time
 import subprocess
 
@@ -57,7 +56,6 @@ class ActionShim(ReportAction):
 class Joystick:
     def __init__(self):
         self.thread = None
-        # signal.signal(signal.SIGINT, self.cleanup_thread)
 
         try:
             options = load_options()
@@ -85,27 +83,14 @@ class Joystick:
         self.thread.controller.actions.append(self.shim)
         self.shim.enable()
 
-    def cleanup_thread(self):
+    def close(self):
         if self.thread is None:
             return
-        # if signum is not None:
-        #     signal.signal(signum, signal.SIG_DFL)
         self.thread.controller.exit("Cleaning up...")
         self.thread.controller.loop.stop()
-        # self.thread.join()
 
     def __del__(self):
-        print("cleaning up")
-        self.cleanup_thread()
-        print("done cleanup")
-
-    def print_values(self):
-        while 1:
-            for key, value in self.get_input().items():
-                print(key,value)
-            print()
-
-            time.sleep(0.1)
+        self.close()
 
     def get_input(self):
         if self.thread.controller.error:
@@ -129,7 +114,11 @@ class Joystick:
             self.thread.controller.device.start_led_flash(on,off)
 
 
-
 if __name__ == "__main__":
     j = Joystick()
-    j.print_values()
+    while 1:
+        for key, value in j.get_input().items():
+            print(key,value)
+        print()
+
+        time.sleep(0.1)
