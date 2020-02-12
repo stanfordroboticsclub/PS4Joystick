@@ -45,7 +45,11 @@ class ActionShim(ReportAction):
             new_out[key] = value
 
         for key in ["left_analog_x", "left_analog_y", "right_analog_x", "right_analog_y"]:
-            new_out[key] =  (new_out[key] - 128) /128
+            #deadzone calculation
+            if math.fabs(new_out[key] - 127.5) < 2:
+                new_out[key] = 0.0
+            else:
+                new_out[key] =  (new_out[key] - 127.5) /128
 
         for key in ["l2_analog", "r2_analog"]:
             new_out[key] =  new_out[key] /256
