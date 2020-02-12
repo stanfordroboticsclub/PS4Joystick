@@ -2,6 +2,7 @@
 import sys
 import signal
 import time
+import subprocess
 
 from threading import Thread
 from collections import OrderedDict
@@ -67,6 +68,7 @@ class Joystick:
             raise ValueError("HID mode not supported")
             backend = HidrawBackend(Daemon.logger)
         else:
+            subprocess.run(["hciconfig", "hciX", "up"])
             backend = BluetoothBackend(Daemon.logger)
 
         try:
@@ -83,7 +85,7 @@ class Joystick:
         self.thread.controller.actions.append(self.shim)
         self.shim.enable()
 
-    def cleanup_thread(self):
+    def cleanup_thread(self, *args):
         if self.thread is None:
             return
         self.thread.controller.exit("Cleaning up...", error=False)
