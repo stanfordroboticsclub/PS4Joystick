@@ -39,18 +39,14 @@ class ActionShim(ReportAction):
             self.disable()
 
     def deadzones(self,values):
-        left_analog_y = values['left_analog_y']
-        left_analog_x = values['left_analog_x']
-        right_analog_y = values['right_analog_y']
-        right_analog_x = values['right_analog_x']
 
-        #deadzones
-        if math.sqrt((left_analog_x - 127) ** 2 + (left_analog_y - 127) ** 2) / 128 < 0.14:
-            values['left_analog_y'] = 127
-            values['left_analog_x'] = 127
-        if math.sqrt((right_analog_x - 127) ** 2 + (right_analog_y - 127) ** 2) / 128 < 0.14:
-            values['right_analog_y'] = 127
-            values['right_analog_x'] = 127
+        deadzone = 0.14
+        if math.sqrt( values['left_analog_x'] ** 2  + values['left_analog_y'] ** 2) < deadzone:
+            values['left_analog_y'] = 0.0
+            values['left_analog_x'] = 0.0
+        if math.sqrt( values['right_analog_x'] ** 2 + values['right_analog_y'] ** 2) < deadzone:
+            values['right_analog_y'] = 0.0
+            values['right_analog_x'] = 0.0
 
         return values
 
@@ -61,12 +57,13 @@ class ActionShim(ReportAction):
             value = getattr(report, key)
             new_out[key] = value
 
-        new_out = self.deadzones(new_out)
 
         for key in ["left_analog_x", "left_analog_y", 
                     "right_analog_x", "right_analog_y", 
                     "l2_analog", "r2_analog"]:
             new_out[key] =  2*( new_out[key]/255 )  - 1
+
+        new_out = self.deadzones(new_out)
 
         self.values = new_out
         return True
