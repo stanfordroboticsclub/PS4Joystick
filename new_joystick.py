@@ -136,18 +136,18 @@ class Joystick:
 
     def led_color(self, red=0, green=0, blue=0):
         """ set RGB color in range 0-255"""
-        self.thread.controller.device.set_led(red,green,blue)
+        self.thread.controller.device.set_led(int(red),int(green),int(blue))
 
     def rumble(self, small=0, big=0):
         """ rumble in range 0-255 """
-        self.thread.controller.device.rumble(small,big)
+        self.thread.controller.device.rumble(int(small),int(big))
 
     def led_flash(self, on=0, off=0):
         """ flash led: on and off times in range 0 - 255 """
         if(on == 0 and off ==0):
             self.thread.controller.device.stop_led_flash()
         else:
-            self.thread.controller.device.start_led_flash(on,off)
+            self.thread.controller.device.start_led_flash(int(on),int(off))
 
 
 if __name__ == "__main__":
