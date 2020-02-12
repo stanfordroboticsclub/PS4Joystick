@@ -88,7 +88,7 @@ class Joystick:
     def cleanup_thread(self, *args):
         if self.thread is None:
             return
-        self.thread.controller.exit("Cleaning up...", error=False)
+        self.thread.controller.exit("Cleaning up...")
         self.thread.controller.loop.stop()
         self.thread.join()
 
