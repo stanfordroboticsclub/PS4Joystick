@@ -57,7 +57,7 @@ class ActionShim(ReportAction):
 class Joystick:
     def __init__(self):
         self.thread = None
-        signal.signal(signal.SIGINT, self.cleanup_thread)
+        # signal.signal(signal.SIGINT, self.cleanup_thread)
 
         try:
             options = load_options()
@@ -88,14 +88,16 @@ class Joystick:
     def cleanup_thread(self, signum=None, frame=None):
         if self.thread is None:
             return
-        if signum is not None:
-            signal.signal(signum, signal.SIG_DFL)
+        # if signum is not None:
+        #     signal.signal(signum, signal.SIG_DFL)
         self.thread.controller.exit("Cleaning up...")
         self.thread.controller.loop.stop()
         self.thread.join()
 
     def __del__(self):
+        print("cleaning up")
         self.cleanup_thread()
+        print("done cleanup")
 
     def print_values(self):
         while 1:
