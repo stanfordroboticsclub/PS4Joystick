@@ -38,6 +38,22 @@ class ActionShim(ReportAction):
         else:
             self.disable()
 
+    def deadzones(self,values):
+        left_analog_y = values['left_analog_y']
+        left_analog_x = values['left_analog_x']
+        right_analog_y = values['right_analog_y']
+        right_analog_x = values['right_analog_x']
+
+        #deadzones
+        if math.sqrt((left_analog_x - 127) ** 2 + (left_analog_y - 127) ** 2) / 128 < 0.14:
+            values['left_analog_y'] = 127
+            values['left_analog_x'] = 127
+        if math.sqrt((right_analog_x - 127) ** 2 + (right_analog_y - 127) ** 2) / 128 < 0.14:
+            values['right_analog_y'] = 127
+            values['right_analog_x'] = 127
+
+        return values
+
     def intercept(self, report):
         dump = "Report magic dump\n"
         new_out = OrderedDict()
@@ -45,12 +61,10 @@ class ActionShim(ReportAction):
             value = getattr(report, key)
             new_out[key] = value
 
+        new_out = self.deadzones(new_out)
+
         for key in ["left_analog_x", "left_analog_y", "right_analog_x", "right_analog_y"]:
-            #deadzone calculation
-            if math.fabs(new_out[key] - 127.5) < 2:
-                new_out[key] = 0.0
-            else:
-                new_out[key] =  (new_out[key] - 127.5) /128
+            new_out[key] =  (new_out[key] - 127) /128
 
         for key in ["l2_analog", "r2_analog"]:
             new_out[key] =  new_out[key] /256
