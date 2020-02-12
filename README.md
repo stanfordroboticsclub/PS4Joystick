@@ -1,4 +1,4 @@
-# UDPJoystick
+# PS4Joystick
 
 Code allowing to use a DualShock (PS4 Joystick) over bluetooth on linux. Over USB comming soon. `mac_joystick.py` shows how to emulate something similar on mac, but without the fancy features.
 
@@ -14,10 +14,15 @@ This method still requires [ds4drv](https://github.com/chrippa/ds4drv) however i
 
 ### Usage
 
-Checkout out `rover_example.py` as it demontrates most features. 
-To copy this functionality to a new repository (say [PupperCommand](https://github.com/stanfordroboticsclub/PupperCommand)) copy the `PS4Joystick.py` file. 
+Take a look at `rover_example.py` as it demontrates most features. 
+To implement this functionality to a new repository (say [PupperCommand](https://github.com/stanfordroboticsclub/PupperCommand)) you can just call `from PS4Joystick import Joystick` anywhere once you've installed the module. Replicate `joystick.service` in that repository.
 
 
 ### Install
 
 ``` sudo bash install.sh ```
+
+
+### Mac
+
+Sadly ds4drv doesn't work on macs. But you can get some of the functionality by installing pygame with `sudo pip3 install pygame`. Take a look in `mac_joystick.py` for an example
