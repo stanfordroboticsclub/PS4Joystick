@@ -47,6 +47,12 @@ class ActionShim(ReportAction):
            value = getattr(report, key)
            new_out[key] = value
 
+        for key in ["left_analog_x", "left_analog_y", "right_analog_x", "right_analog_y"]:
+           new_out[key] =  (new_out[key] - 128) /128
+
+        for key in ["l2_analog", "r2_analog"]:
+           new_out[key] =  new_out[key] /256
+
        self.values = new_out
        return True
 
@@ -101,6 +107,7 @@ class Joystick:
     def get_input(self):
         if thread.controller.error:
             raise IOError("Encountered error with controller")
+
         return self.shim.values
 
     def led_color(self, red=0, green=0, blue=0):
