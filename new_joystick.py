@@ -1,6 +1,6 @@
 
 import sys
-import signal
+# import signal
 import time
 import subprocess
 
@@ -85,14 +85,14 @@ class Joystick:
         self.thread.controller.actions.append(self.shim)
         self.shim.enable()
 
-    def cleanup_thread(self, signum=None, frame=None):
+    def cleanup_thread(self):
         if self.thread is None:
             return
         # if signum is not None:
         #     signal.signal(signum, signal.SIG_DFL)
         self.thread.controller.exit("Cleaning up...")
         self.thread.controller.loop.stop()
-        self.thread.join()
+        # self.thread.join()
 
     def __del__(self):
         print("cleaning up")
