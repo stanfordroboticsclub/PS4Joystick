@@ -25,6 +25,7 @@ class ActionShim(ReportAction):
         super(ActionShim, self).__init__(*args, **kwargs)
         self.timer = self.create_timer(0.02, self.intercept)
         self.values = None
+        self.last_timestamp = None
 
     def enable(self):
         self.timer.start()
@@ -34,10 +35,7 @@ class ActionShim(ReportAction):
         self.values = None
 
     def load_options(self, options):
-        if options.dump_reports:
-            self.enable()
-        else:
-            self.disable()
+        pass
 
     def deadzones(self,values):
         deadzone = 0.14
@@ -65,6 +63,12 @@ class ActionShim(ReportAction):
         new_out = self.deadzones(new_out)
 
         self.values = new_out
+
+        if self.last_timestamp == self.values['timestamp']:
+            self.values = None
+        else:
+            self.last_timestamp = self.values['timestamp']
+
         return True
 
 class Joystick:
@@ -128,6 +132,8 @@ class Joystick:
         """ returns ordered dict with state of all inputs """
         if self.thread.controller.error:
             raise IOError("Encountered error with controller")
+        if self.shim.values is None:
+            raise TimeoutError("Joystick hasn't updated values in last 500ms")
 
         return self.shim.values
 
