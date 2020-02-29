@@ -5,7 +5,7 @@ import subprocess
 import math
 
 from threading import Thread
-from collections import OrderedDict
+from collections import OrderedDict, deque
 
 from ds4drv.actions import ActionRegistry
 from ds4drv.backends import BluetoothBackend, HidrawBackend
@@ -25,7 +25,7 @@ class ActionShim(ReportAction):
         super(ActionShim, self).__init__(*args, **kwargs)
         self.timer = self.create_timer(0.02, self.intercept)
         self.values = None
-        self.last_timestamp = None
+        self.timestamps = deque(range(10), maxlen=10)
 
     def enable(self):
         self.timer.start()
@@ -54,7 +54,6 @@ class ActionShim(ReportAction):
             value = getattr(report, key)
             new_out[key] = value
 
-
         for key in ["left_analog_x", "left_analog_y", 
                     "right_analog_x", "right_analog_y", 
                     "l2_analog", "r2_analog"]:
@@ -62,12 +61,11 @@ class ActionShim(ReportAction):
 
         new_out = self.deadzones(new_out)
 
-        self.values = new_out
-
-        if self.last_timestamp == self.values['timestamp']:
+        self.timestamps.append(new_out['timestamp'])
+        if len(set(self.timestamps)) <= 1:
             self.values = None
         else:
-            self.last_timestamp = self.values['timestamp']
+            self.values = new_out
 
         return True
 
@@ -133,7 +131,7 @@ class Joystick:
         if self.thread.controller.error:
             raise IOError("Encountered error with controller")
         if self.shim.values is None:
-            raise TimeoutError("Joystick hasn't updated values in last 500ms")
+            raise TimeoutError("Joystick hasn't updated values in last 200ms")
 
         return self.shim.values
 
