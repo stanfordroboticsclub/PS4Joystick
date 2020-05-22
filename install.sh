@@ -18,7 +18,7 @@ yes | sudo pip3 install ds4drv
 sudo python3 setup.py clean --all install
 
 exit
-# we don't want the example joystick service installed bu default
+# we don't want the example joystick service installed by default
 
 for file in *.service; do
 	[ -f "$file" ] || break
