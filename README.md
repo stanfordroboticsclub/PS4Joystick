@@ -4,7 +4,7 @@ Code allowing the use of a DualShock (PS4 Joystick) over Bluetooth on Linux. Ove
 
 Note: We have updated from the previous version so make sure you disable ds4drv from running automatically at startup as they will conflict.
 
-This method still requires [ds4drv](https://github.com/chrippa/ds4drv) however it doesn't run it as a seperate service and then separatly pull joystick data using Pygame. Instead it imports ds4drv directly which gives us much more control over the joystick behaviour. Specifically:
+This method still requires [ds4drv](https://github.com/chrippa/ds4drv) however it doesn't run it as a separate service and then separately pulls joystick data using Pygame. Instead it imports ds4drv directly which gives us much more control over the joystick behaviour. Specifically:
 
 - It will only pair to one joystick allowing us to run multiple robots at a time
 - Allows for launching joystick code via systemd at boot using `sudo systemctl enable joystick`
@@ -14,7 +14,7 @@ This method still requires [ds4drv](https://github.com/chrippa/ds4drv) however i
 
 ### Usage
 
-Take a look at `rover_example.py` as it demontrates most features. 
+Take a look at `rover_example.py` as it demonstrates most features. 
 To implement this functionality to a new repository (say [PupperCommand](https://github.com/stanfordroboticsclub/PupperCommand)) you can just call `from PS4Joystick import Joystick` anywhere once you've installed the module. Replicate `joystick.service` in that repository.
 
 
